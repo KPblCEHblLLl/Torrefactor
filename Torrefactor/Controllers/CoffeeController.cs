@@ -54,27 +54,39 @@ namespace Torrefactor.Controllers
 		[Route("add"), HttpPost]
 		public async Task Add(string coffeeName, int weight)
 		{
-			var userOrders =
-				(await _coffeeOrderRepository.GetUserOrders(User.Identity.Name))
-				?? new CoffeeOrder(User.Identity.Name);
-
 			var desiredPack = await getDesiredPack(coffeeName, weight);
-			userOrders.AddCoffeePack(desiredPack);
 
-			await _coffeeOrderRepository.Update(userOrders);
+		    await ConcurrencyHelper.WithConcurrency<CoffeeOrder>(
+		        userOrder =>
+		        {
+			        userOrder.AddCoffeePack(desiredPack);
+                    return true;
+		        },
+		        async () =>
+		        {
+		            return (await _coffeeOrderRepository.GetUserOrders(User.Identity.Name))
+		                   ?? new CoffeeOrder(User.Identity.Name);
+		        },
+		        _coffeeOrderRepository.Update);
 		}
 
 		[Route("remove"), HttpPost]
 		public async Task Remove(string coffeeName, int weight)
 		{
-			var userOrders =
-				(await _coffeeOrderRepository.GetUserOrders(User.Identity.Name))
-				?? new CoffeeOrder(User.Identity.Name);
-
 			var desiredPack = await getDesiredPack(coffeeName, weight);
-			userOrders.RemoveCoffeePack(desiredPack);
 
-			await _coffeeOrderRepository.Update(userOrders);
+            await ConcurrencyHelper.WithConcurrency<CoffeeOrder>(
+                userOrder =>
+                {
+                    userOrder.RemoveCoffeePack(desiredPack);
+                    return true;
+                },
+                async () =>
+                {
+                    return (await _coffeeOrderRepository.GetUserOrders(User.Identity.Name))
+                           ?? new CoffeeOrder(User.Identity.Name);
+                },
+                _coffeeOrderRepository.Update);
 		}
 
 		[Route("reload"), HttpPost]

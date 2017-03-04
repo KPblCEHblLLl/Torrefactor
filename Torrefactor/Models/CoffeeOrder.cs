@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -17,8 +18,10 @@ namespace Torrefactor.Models
 
 		[BsonId]
 		public string Username { get; private set; }
+        [BsonElement]
+	    public Guid? Version { get; private set; }
 
-		public IReadOnlyCollection<CoffeePack> Packs
+	    public IReadOnlyCollection<CoffeePack> Packs
 		{
 			get { return _packs; }
 		}
@@ -37,5 +40,11 @@ namespace Torrefactor.Models
 		{
 			return _packs.Count(_ => _.CoffeeKindName == kind.Name && _.Weight == weight);
 		}
+
+	    public Guid ChangeVersion()
+	    {
+	        Version = Guid.NewGuid();
+	        return Version.Value;
+	    }
 	}
 }

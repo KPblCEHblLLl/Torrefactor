@@ -19,6 +19,7 @@
     <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -187,10 +188,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\CoffeeController.cs" />
+    <Compile Include="Controllers\CuncurrencyException.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="DAL\CoffeeKindRepository.cs" />
     <Compile Include="DAL\CoffeeOrderRepository.cs" />
+    <Compile Include="DAL\ConcurrencyHelper.cs" />
     <Compile Include="DAL\Repository.cs" />
     <Compile Include="Models\CoffeeKind.cs" />
     <Compile Include="Models\CoffeeOrder.cs" />
